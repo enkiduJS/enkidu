@@ -1,0 +1,28 @@
+{
+  "name": "enkidu",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "rollup --config",
+    "dev": "rollup --config --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/enkiduJS/enkidu.git"
+  },
+  "author": "simonpai",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/enkiduJS/enkidu/issues"
+  },
+  "homepage": "https://github.com/enkiduJS/enkidu#readme",
+  "peerDependencies": {
+    "webpack": "2.x || 3.x"
+  },
+  "devDependencies": {
+    "globby": "^8.0.1",
+    "rollup": "^0.57.0",
+    "rollup-watch": "^4.3.1"
+  }
+}
