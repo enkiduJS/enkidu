@@ -1,11 +1,16 @@
 {
-  "name": "enkidu",
-  "version": "1.0.0",
+  "name": "@enkidu/enkidu",
+  "version": "1.0.2",
   "description": "A static analysis toolkit based on webpack and babel.",
   "main": "lib/index.js",
+  "files": [
+    "lib/**",
+    "README.md"
+  ],
   "scripts": {
     "build": "rollup --config",
-    "dev": "rollup --config --watch"
+    "dev": "rollup --config --watch",
+    "publish": "npm publish --access=public"
   },
   "repository": {
     "type": "git",
