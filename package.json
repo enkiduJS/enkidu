@@ -1,7 +1,7 @@
 {
   "name": "enkidu",
   "version": "1.0.0",
-  "description": "",
+  "description": "A static analysis toolkit based on webpack and babel.",
   "main": "lib/index.js",
   "scripts": {
     "build": "rollup --config",
@@ -17,9 +17,6 @@
     "url": "https://github.com/enkiduJS/enkidu/issues"
   },
   "homepage": "https://github.com/enkiduJS/enkidu#readme",
-  "peerDependencies": {
-    "webpack": "2.x || 3.x"
-  },
   "devDependencies": {
     "globby": "^8.0.1",
     "rollup": "^0.57.0",
