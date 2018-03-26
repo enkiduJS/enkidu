@@ -11,14 +11,20 @@ const mainEntry = {
   ]
 };
 
-const pluginsEntries = globby.sync('src/plugins/**/*.js')
-  .map((inputFile) => ({
-    input: inputFile,
-    output: {
-      file: inputFile.replace('src', 'lib'),
-      format: 'cjs'
-    }
-  }));
+function globEntries(pattern) {
+  return globby.sync('src/' + pattern)
+    .map((inputFile) => ({
+      input: inputFile,
+      output: {
+        file: inputFile.replace('src', 'lib'),
+        format: 'cjs'
+      }
+    }));
+}
+
+const runnersEntries = globEntries('runners/**/*.js');
+
+const pluginsEntries = globEntries('plugins/**/*.js');
 
 function addCommonProps(entry) {
   return Object.assign({}, entry, {
@@ -28,4 +34,4 @@ function addCommonProps(entry) {
   });
 }
 
-export default [mainEntry].concat(pluginsEntries).map(addCommonProps);
+export default [mainEntry].concat(runnersEntries).concat(pluginsEntries).map(addCommonProps);

@@ -1,4 +1,4 @@
-import EventEmitter from 'events';
+import Emitter from './event';
 
 class DependencyInterface {
 
@@ -34,8 +34,9 @@ class DependencyInterface {
 
 class PluginsInterface {
 
-  constructor(node) {
-    this._node = node;
+  constructor(dependencies, runnerEvents) {
+    this._dependencies = dependencies;
+    this._runnerEvents = runnerEvents;
   }
 
   use(descriptor) {
@@ -43,8 +44,12 @@ class PluginsInterface {
       throw new Error('Cannot register new dependency after setup phase.');
     }
     const dependency = new DependencyInterface(descriptor);
-    this._node._dependencies.push(dependency);
+    this._dependencies.push(dependency);
     return dependency;
+  }
+
+  get runner() {
+    return this._runnerEvents;
   }
 
   _seal() {
@@ -57,27 +62,15 @@ class PluginsInterface {
 
 }
 
-class HooksInterface {
-
-  constructor(node) {
-    this._events = node.events;
-  }
-
-  call() {
-    this._events.emit.apply(this._events, arguments);
-  }
-
-}
-
 class Node {
 
-  constructor(plugin) {
+  constructor(runnerEvents, plugin) {
     this._dependencies = [];
-    this.events = new EventEmitter();
+    this._emitter = new Emitter();
     this.plugin = plugin;
 
     // supply plugins API to plugin
-    const plugins = new PluginsInterface(this);
+    const plugins = new PluginsInterface(this._dependencies, runnerEvents);
     if (typeof plugin.setup === 'function') {
       plugin.setup(plugins);
     }
@@ -85,12 +78,12 @@ class Node {
 
     // inject hooks API
     Object.defineProperty(plugin, 'hooks', {
-      value: new HooksInterface(this)
+      value: this._emitter.hooks
     });
   }
 
   on(listeners) {
-    const events = this.events;
+    const events = this._emitter.events;
     for (let key in listeners) {
       for (let listener of listeners[key]) {
         events.on(key, listener);

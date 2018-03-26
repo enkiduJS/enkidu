@@ -1,5 +1,6 @@
-import Node from './node';
 import hashFn from './hash';
+import Node from './node';
+import Emitter from './event';
 
 class Cache {
 
@@ -34,7 +35,8 @@ class Cache {
 
 class NodePool {
 
-  constructor() {
+  constructor(runnerEvents) {
+    this._runnerEvents = runnerEvents;
     this._nodeCache = new Cache();
     this._nodeList = [];
     this._pluginSet = new Set();
@@ -48,6 +50,7 @@ class NodePool {
   }
 
   _resolve(descriptor) {
+    const runnerEvents = this._runnerEvents; // TODO: pass into Node then setup
     // TODO: cycle detection
     let plugin, c, hash;
 
@@ -58,7 +61,7 @@ class NodePool {
     if (Array.isArray(descriptor)) {
       c = descriptor[0];
       if (typeof c === 'string') {
-        c = require(c);
+        c = require(c); // TODO: we need to resolve by context (project dir)
       }
 
       if (typeof c === 'function') {
@@ -95,7 +98,7 @@ class NodePool {
     this._pluginSet.add(plugin);
 
     // 3. create node and add to cache (if applicable)
-    const node = new Node(plugin);
+    const node = new Node(runnerEvents, plugin);
     this._nodeCache.set(c, hash, node);
 
     // 4. recurse: run dependencies first so they appear first in the node list
@@ -114,12 +117,13 @@ class NodePool {
 class Session {
 
   constructor(descriptors) {
-    this.nodes = new NodePool().resolve(descriptors);
+    this._emitter = new Emitter();
+    this._nodes = new NodePool(this._emitter.events).resolve(descriptors);
   }
 
   _call() {
     let returnValue, value;
-    for (let node of this.nodes) {
+    for (let node of this._nodes) {
       value = node.call.apply(node, arguments);
       if (value !== undefined) {
         returnValue = value;
@@ -128,17 +132,27 @@ class Session {
     return returnValue;
   }
 
+  get hooks() {
+    return this._emitter.hooks;
+  }
+
   pre() {
     this._call('pre');
   }
 
+  // TODO: remove this
+  /*
   config(config) {
     this._call('config', config);
   }
+  */
 
+  // TODO: remove this
+  /*
   compiler(compiler) {
     this._call('compiler', compiler);
   }
+  */
 
   post() {
     return this._call('post');

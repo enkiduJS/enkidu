@@ -1,6 +1,6 @@
 {
   "name": "@enkidu/enkidu",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "A static analysis toolkit based on webpack and babel.",
   "main": "lib/index.js",
   "files": [

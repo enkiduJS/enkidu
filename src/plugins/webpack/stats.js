@@ -2,10 +2,14 @@ class WebpackStatsPlugin {
 
   constructor() {}
 
+  setup(plugins) {
+    plugins.runner.on('compiler', this.compiler.bind(this));
+  }
+
   compiler(compiler) {
-    const self = this;
+    const hooks = this.hooks;
     compiler.plugin('done', (stats, callback) => {
-      self.hooks.call('stats', stats);
+      hooks.call('stats', stats);
       if (typeof callback === 'function') {
         callback(); // compatible with webpack 4
       }
